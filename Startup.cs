@@ -53,6 +53,7 @@ namespace backend_cshar
             });
 
             // Get the database context and apply the migrations
+            // this run when app web is in azure
             var context = services.BuildServiceProvider().GetService<DataBaseDbContext>();
             context.Database.Migrate();
         }

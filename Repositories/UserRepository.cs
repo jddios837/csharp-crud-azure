@@ -55,6 +55,37 @@ namespace backend_cshar.Repositories
                 return u;
             });
         }
+
+        public async Task<User> UpdateAsync(string id, User u)
+        {
+            db.Users.Update(u);
+            int affected = await db.SaveChangesAsync();
+
+            if (affected == 1) 
+            {
+                return UpdateCache(id, u);
+            }
+
+            return null;
+        }
+
+        public async Task<bool?> DeleteAsync(string id)
+        {
+            User u = db.Users.Find(int.Parse(id));
+            db.Users.Remove(u);
+            int affected = await db.SaveChangesAsync();
+
+            if (affected == 1) 
+            {
+                //remove from cache
+                return usersCache.TryRemove(id, out u);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
         private User UpdateCache(string id, User u)
         {
             User old;

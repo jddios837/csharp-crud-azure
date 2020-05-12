@@ -63,5 +63,58 @@ namespace backend_cshar.Controllers
             );
         }
 
+
+        // PUT: api/customers/[id]
+        // BODY: Customer (JSON, XML)
+        [HttpPut("{id}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> Update(string id, [FromBody] User u)
+        {
+            if (u == null || u.Id.ToString() != id) {
+                return BadRequest();
+            }
+
+            if (!ModelState.IsValid) {
+                return BadRequest(ModelState);
+            }
+
+            var existing = await repo.RetrieveAsync(id);
+
+            if (existing == null) {
+                return NotFound();
+            }
+
+            await repo.UpdateAsync(id, u);
+
+            return new NoContentResult();
+        }
+
+        // DELETE: api/customers/[id]
+        [HttpDelete("{id}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> Delete(string id)
+        {
+            var existing = await repo.RetrieveAsync(id);
+
+            if (existing == null)
+            {
+                return NotFound();
+            }
+
+            bool? deleted = await repo.DeleteAsync(id);
+
+            if(deleted.HasValue && deleted.Value)
+            {
+                return new NoContentResult();
+            }
+            else
+            {
+                return BadRequest($"Customer {id} was found but failed to delete.");
+            }
+        }
     }
 }

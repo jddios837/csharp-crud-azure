@@ -10,6 +10,8 @@ namespace backend_cshar.Repositories
         Task<IEnumerable<User>> RetrieveAllAsync();
         Task<User> RetrieveAsync(string id);
         Task<User> CreateAsync(User u);
+        Task<User> UpdateAsync(string id, User u);
+        Task<bool?> DeleteAsync(string id);
 
     }
 }
