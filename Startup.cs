@@ -21,6 +21,7 @@ using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using Microsoft.OpenApi.Models;
 
+
 namespace backend_cshar
 {
     public class Startup
@@ -49,8 +50,11 @@ namespace backend_cshar
             {
                 options.SwaggerDoc(name: "v1", info: new OpenApiInfo
                             { Title = "CRUD C# Service API", Version = "v1" });
-                            
             });
+
+            // Get the database context and apply the migrations
+            var context = services.BuildServiceProvider().GetService<DataBaseDbContext>();
+            context.Database.Migrate();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -82,6 +86,7 @@ namespace backend_cshar
                     SubmitMethod.Get, SubmitMethod.Post,
                     SubmitMethod.Put, SubmitMethod.Delete });
             });
+
         }
     }
 }
