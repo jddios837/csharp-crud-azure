@@ -24,6 +24,21 @@ namespace backend_cshar.Controllers
             return await repo.RetrieveAllAsync();
         }
 
+        [HttpGet("{id}", Name = nameof(GetUser))] // Name Route
+        [ProducesResponseType(200, Type = typeof(User))]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> GetUser(string id)
+        {
+            User u = await repo.RetrieveAsync(id);
+
+            if (u == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(u);
+        }
+
         [HttpPost]
         [ProducesResponseType(201, Type = typeof(User))]
         [ProducesResponseType(400)]
@@ -42,7 +57,7 @@ namespace backend_cshar.Controllers
             User added = await repo.CreateAsync(u);
 
             return CreatedAtRoute(
-                routeName: nameof(GetUsers),
+                routeName: nameof(GetUser),
                 routeValues: new { id = added.Id.ToString()},
                 value: added
             );

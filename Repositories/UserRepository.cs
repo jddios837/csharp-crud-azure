@@ -46,6 +46,15 @@ namespace backend_cshar.Repositories
             return Task.Run<IEnumerable<User>>(() => usersCache.Values);
         }
         
+        public Task<User> RetrieveAsync(string id)
+        {
+            return Task.Run(() => 
+            {
+                User u;
+                usersCache.TryGetValue(id, out u);
+                return u;
+            });
+        }
         private User UpdateCache(string id, User u)
         {
             User old;

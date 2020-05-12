@@ -16,6 +16,11 @@ using Microsoft.EntityFrameworkCore;
 
 using backend_cshar.Repositories;
 
+// ADD SWAGGER
+using Swashbuckle.AspNetCore.Swagger;
+using Swashbuckle.AspNetCore.SwaggerUI;
+using Microsoft.OpenApi.Models;
+
 namespace backend_cshar
 {
     public class Startup
@@ -37,6 +42,15 @@ namespace backend_cshar
 
             // Add Customer Repository
             services.AddScoped<IUserRepository, UserRepository>();
+
+            // Register the Swagger generator and define a Swagger document
+            // for Northwind service
+            services.AddSwaggerGen(options =>
+            {
+                options.SwaggerDoc(name: "v1", info: new OpenApiInfo
+                            { Title = "CRUD C# Service API", Version = "v1" });
+                            
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -56,6 +70,17 @@ namespace backend_cshar
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+            });
+
+            app.UseSwagger();
+
+            app.UseSwaggerUI(options =>
+            {
+                options.SwaggerEndpoint("/swagger/v1/swagger.json",
+                "CRUD C# Service API Version 1");
+                options.SupportedSubmitMethods(new[] {
+                    SubmitMethod.Get, SubmitMethod.Post,
+                    SubmitMethod.Put, SubmitMethod.Delete });
             });
         }
     }
