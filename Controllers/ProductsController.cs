@@ -8,73 +8,73 @@ namespace backend_cshar.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UsersController : ControllerBase
+    public class ProductsController : ControllerBase
     {
-        private IUserRepository repo;
+        private IProductRepository repo;
 
-        public UsersController(IUserRepository repo)
+        public ProductsController(IProductRepository repo)
         {
             this.repo = repo;
         }
 
-        // GET: api/users
+        // GET: api/products
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<User>))]
-        public async Task<IEnumerable<User>> GetUsers() {
+        [ProducesResponseType(200, Type = typeof(IEnumerable<Product>))]
+        public async Task<IEnumerable<Product>> GetProducts() {
             return await repo.RetrieveAllAsync();
         }
 
-        [HttpGet("{id}", Name = nameof(GetUser))] // Name Route
-        [ProducesResponseType(200, Type = typeof(User))]
+        [HttpGet("{id}", Name = nameof(GetProduct))] // Name Route
+        [ProducesResponseType(200, Type = typeof(Product))]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> GetUser(string id)
+        public async Task<IActionResult> GetProduct(string id)
         {
-            User u = await repo.RetrieveAsync(id);
+            Product p = await repo.RetrieveAsync(id);
 
-            if (u == null)
+            if (p == null)
             {
                 return NotFound();
             }
 
-            return Ok(u);
+            return Ok(p);
         }
 
-        // POST: api/users
+        // POST: api/products
         // BODY: Customer (JSON, XML)
         [HttpPost]
-        [ProducesResponseType(201, Type = typeof(User))]
+        [ProducesResponseType(201, Type = typeof(Product))]
         [ProducesResponseType(400)]
-        public async Task<IActionResult> Create([FromBody] User u)
+        public async Task<IActionResult> Create([FromBody] Product p)
         {
-            if (u == null)
+            if (p == null)
             {
                 return BadRequest();
             }
 
-            if (!ModelState.IsValid)
+            if(!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            User added = await repo.CreateAsync(u);
+            Product added = await repo.CreateAsync(p);
 
+            // made a redirect inside method
             return CreatedAtRoute(
-                routeName: nameof(GetUser),
+                routeName: nameof(GetProduct),
                 routeValues: new { id = added.Id.ToString()},
                 value: added
             );
         }
 
-
-        // PUT: api/customers/[id]
-        // BODY: Customer (JSON, XML)
+        // PUT: api/products/[id]
+        // BODY: Product (JSON, XML)
         [HttpPut("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> Update(string id, [FromBody] User u)
+        public async Task<IActionResult> Update(string id, [FromBody] Product p)
         {
-            if (u == null || u.Id.ToString() != id) {
+            if (p == null || p.Id.ToString() != id) {
                 return BadRequest();
             }
 
@@ -88,12 +88,12 @@ namespace backend_cshar.Controllers
                 return NotFound();
             }
 
-            await repo.UpdateAsync(id, u);
+            await repo.UpdateAsync(id, p);
 
             return new NoContentResult();
         }
 
-        // DELETE: api/customers/[id]
+        // DELETE: api/products/[id]
         [HttpDelete("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
@@ -102,21 +102,19 @@ namespace backend_cshar.Controllers
         {
             var existing = await repo.RetrieveAsync(id);
 
-            if (existing == null)
-            {
+            if (existing == null) {
                 return NotFound();
             }
 
             bool? deleted = await repo.DeleteAsync(id);
 
-            if(deleted.HasValue && deleted.Value)
-            {
+            if (deleted.HasValue && deleted.Value) {
                 return new NoContentResult();
-            }
-            else
-            {
+            } else {
                 return BadRequest($"Customer {id} was found but failed to delete.");
             }
         }
+ 
+
     }
 }

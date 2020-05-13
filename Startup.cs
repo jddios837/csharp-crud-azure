@@ -22,6 +22,7 @@ using Swashbuckle.AspNetCore.SwaggerUI;
 using Microsoft.OpenApi.Models;
 
 
+
 namespace backend_cshar
 {
     public class Startup
@@ -43,6 +44,7 @@ namespace backend_cshar
 
             // Add Customer Repository
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IProductRepository, ProductRepository>();
 
             // Register the Swagger generator and define a Swagger document
             // for Northwind service
@@ -52,10 +54,14 @@ namespace backend_cshar
                             { Title = "CRUD C# Service API", Version = "v1" });
             });
 
+            services.AddControllers().AddNewtonsoftJson(options =>
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+            );
+
             // Get the database context and apply the migrations
             // this run when app web is in azure
-            var context = services.BuildServiceProvider().GetService<DataBaseDbContext>();
-            context.Database.Migrate();
+            // var context = services.BuildServiceProvider().GetService<DataBaseDbContext>();
+            // context.Database.Migrate();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

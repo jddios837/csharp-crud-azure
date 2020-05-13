@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
 using System.Linq;
+using Microsoft.EntityFrameworkCore; // Include is here
 using System.Threading.Tasks;
 
 using backend_cshar.Entities;
@@ -21,7 +22,7 @@ namespace backend_cshar.Repositories
 
             if (usersCache == null)
             {
-                usersCache = new ConcurrentDictionary<string, User>(db.Users.ToDictionary(c => c.Id.ToString()));
+                usersCache = new ConcurrentDictionary<string, User>(db.Users.Include(u => u.Products).ToDictionary(c => c.Id.ToString()));
             }
         }
 

@@ -12,6 +12,20 @@ namespace backend_cshar.Entities
         }   
         public DataBaseDbContext(DbContextOptions options) : base(options)
         {
-        }     
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            // define a one-to-many relationship
+            modelBuilder.Entity<User>()
+                            .HasMany(c => c.Products)
+                            .WithOne(p => p.User);
+
+            modelBuilder.Entity<Product>()
+                    .HasOne(p => p.User)
+                    .WithMany(c => c.Products);                
+        }   
     }
 }
